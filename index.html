@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart City Traffic Management - Techfest 2026</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Global Variables & Reset */
+    :root {
+      --bg-dark: #0f172a;
+      --bg-darker: #020617;
+      --primary: #38bdf8;
+      /* Sky Blue */
+      --secondary: #6366f1;
+      /* Indigo */
+      --accent: #22d3ee;
+      /* Cyan */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --glass-bg: rgba(30, 41, 59, 0.5);
+      --success: #22c55e;
+      --warning: #facc15;
+      --danger: #ef4444;
+      --card-radius: 16px;
+      --font-family: 'Inter', system-ui, sans-serif;
+      --header-height: 80px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-dark);
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 20%);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    /* Typography */
+    h1,
+    h2,
+    h3 {
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 3rem;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Helpers */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      font-weight: 500;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    /* Buttons and Cards */
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 99px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 2rem;
+    }
+
+    /* Sections */
+    main {
+      flex: 1;
+      padding-top: var(--header-height);
+    }
+
+    section.page-section {
+      padding: 2rem 0;
+      min-height: calc(100vh - var(--header-height) - 100px);
+    }
+
+    /* --- SIMULATION STYLES --- */
+    .controls-panel {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-family: inherit;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .junction-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .signal {
+      background: rgba(2, 6, 23, 0.8);
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .signal.active-lane {
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+
+    .signal h3 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .lights-container {
+      background: #000;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #333;
+    }
+
+    .light {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 8px 0;
+      background: #333;
+      opacity: 0.3;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .light.red.active {
+      background: var(--danger);
+      opacity: 1;
+      box-shadow: 0 0 20px var(--danger);
+    }
+
+    .light.yellow.active {
+      background: var(--warning);
+      opacity: 1;
+      box-shadow: 0 0 20px var(--warning);
+    }
+
+    .light.green.active {
+      background: var(--success);
+      opacity: 1;
+      box-shadow: 0 0 20px var(--success);
+    }
+
+    .timer-display {
+      margin-top: 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--text-main);
+      background: #111;
+      padding: 5px 15px;
+      border-radius: 5px;
+      min-width: 60px;
+      text-align: center;
+      border: 1px solid #333;
+    }
+
+    /* --- TEAM STYLES --- */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem 0;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .junction-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      /* Simplified for mobile */
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#" onclick="showPage('home')" class="logo">SmartCity<span style="color:var(--text-main)">AI</span></a>
+      <div class="nav-links">
+        <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+        <a onclick="showPage('simulation')" id="nav-simulation">Simulation</a>
+        <a onclick="showPage('details')" id="nav-details">Details</a>
+        <a onclick="showPage('team')" id="nav-team">Team</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- === HOME PAGE === -->
+    <section id="home" class="page-section fade-in">
+      <div
+        style="text-align: center; padding: 6rem 0; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h1 style="font-size: 4rem; margin-bottom: 2rem;">Next Gen Traffic Control</h1>
+        <p style="font-size: 1.25rem; max-width: 600px; margin: 0 auto 3rem;">
+          Experience the future of urban mobility with our Density-Based Traffic Management System.
+          Reducing congestion, saving fuel, and prioritizing emergency response.
+        </p>
+        <div style="display: flex; gap: 1.5rem;">
+          <button onclick="showPage('simulation')" class="btn btn-primary">Launch Simulation</button>
+          <button onclick="showPage('details')" class="btn btn-outline">Learn More</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 6rem;">
+        <h2 style="text-align: center;">Key Features</h2>
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+          <div class="glass-card">
+            <h3 style="color: var(--accent);">Adaptive Timing</h3>
+            <p>Sensors detect vehicle density in real-time and adjust signal duration automatically.</p>
+          </div>
+          <div class="glass-card">
+            <h3 style="color: var(--danger);">Emergency Priority</h3>
+            <p>Ambulances and fire trucks are detected instantly, turning the route green.</p>
+          </div>
+          <div class="glass-card">
+            <h3 style="color: var(--secondary);">Web Interface</h3>
+            <p>A fully responsive control dashboard allows city administrators to monitor signals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- === SIMULATION PAGE === -->
+    <section id="simulation" class="page-section hidden fade-in">
+      <div style="text-align: center; margin: 2rem 0;">
+        <h1>Live Simulation</h1>
+        <p>Experience our adaptive traffic control algorithm in real-time.</p>
+      </div>
+
+      <!-- Controls -->
+      <div class="glass-card controls-panel">
+        <div class="input-group">
+          <label>Lane A Density</label>
+          <input type="number" id="val-A" value="6" min="1" max="20">
+        </div>
+        <div class="input-group">
+          <label>Lane B Density</label>
+          <input type="number" id="val-B" value="10" min="1" max="20">
+        </div>
+        <div class="input-group">
+          <label>Lane C Density</label>
+          <input type="number" id="val-C" value="4" min="1" max="20">
+        </div>
+        <div class="input-group">
+          <label>Lane D Density</label>
+          <input type="number" id="val-D" value="8" min="1" max="20">
+        </div>
+        <div style="grid-column: 1 / -1; display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+          <button id="btn-start" class="btn btn-primary" onclick="startSystem()">Start System</button>
+          <button id="btn-emergency" class="btn btn-danger" onclick="activateEmergency()">Emergency Mode</button>
+        </div>
+      </div>
+
+      <!-- Junction -->
+      <div class="junction-grid">
+        <div class="signal" id="signal-A">
+          <h3>Lane A (North)</h3>
+          <div class="lights-container">
+            <div class="light red"></div>
+            <div class="light yellow"></div>
+            <div class="light green"></div>
+          </div>
+          <div class="timer-display">--</div>
+        </div>
+        <div class="signal" id="signal-B">
+          <h3>Lane B (East)</h3>
+          <div class="lights-container">
+            <div class="light red"></div>
+            <div class="light yellow"></div>
+            <div class="light green"></div>
+          </div>
+          <div class="timer-display">--</div>
+        </div>
+        <div class="signal" id="signal-C">
+          <h3>Lane C (South)</h3>
+          <div class="lights-container">
+            <div class="light red"></div>
+            <div class="light yellow"></div>
+            <div class="light green"></div>
+          </div>
+          <div class="timer-display">--</div>
+        </div>
+        <div class="signal" id="signal-D">
+          <h3>Lane D (West)</h3>
+          <div class="lights-container">
+            <div class="light red"></div>
+            <div class="light yellow"></div>
+            <div class="light green"></div>
+          </div>
+          <div class="timer-display">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- === DETAILS PAGE === -->
+    <section id="details" class="page-section hidden fade-in">
+      <h1 style="text-align: center; margin-bottom: 3rem;">Technical Implementation</h1>
+      <div style="display: grid; gap: 2rem;">
+        <div class="glass-card">
+          <h2 style="color: var(--primary);">1. The Problem</h2>
+          <p>Traditional traffic lights use fixed timers, leading to inefficient traffic flow.</p>
+        </div>
+        <div class="glass-card">
+          <h2 style="color: var(--accent);">2. Our Solution</h2>
+          <p>Our system uses IR sensors to count vehicles. The CPU calculates green signal time based on density.</p>
+          <div
+            style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 8px; margin-top: 1rem; font-family: monospace;">
+            Time = max(10, Car_Count * 3) seconds
+          </div>
+        </div>
+        <div class="glass-card">
+          <h2 style="color: var(--danger);">3. Emergency Protocol</h2>
+          <p>When an emergency vehicle is detected, the current light terminates and the emergency lane turns Green
+            immediately.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- === TEAM PAGE === -->
+    <section id="team" class="page-section hidden fade-in">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h1>Meet the Team</h1>
+        <p>The minds behind the Smart City Traffic Management System</p>
+      </div>
+      <div class="team-grid">
+        <div class="glass-card">
+          <div class="profile-img">L</div>
+          <h3>Lead Developer</h3>
+          <p style="color: var(--primary);">Full Stack</p>
+        </div>
+        <div class="glass-card">
+          <div class="profile-img">U</div>
+          <h3>UI/UX Designer</h3>
+          <p style="color: var(--accent);">Frontend</p>
+        </div>
+        <div class="glass-card">
+          <div class="profile-img">R</div>
+          <h3>Researcher</h3>
+          <p style="color: var(--secondary);">Data</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Smart City Techfest Project. Built with passion.</p>
+  </footer>
+
+  <script>
+    // --- NAVIGATION LOGIC ---
+    function showPage(pageId) {
+      // Hide all sections
+      document.querySelectorAll('.page-section').forEach(el => {
+        el.classList.add('hidden');
+      });
+
+      // Remove active class from nav links
+      document.querySelectorAll('.nav-links a').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      // Show target section
+      document.getElementById(pageId).classList.remove('hidden');
+
+      // Set active nav link
+      const navLink = document.getElementById('nav-' + pageId);
+      if (navLink) navLink.classList.add('active');
+
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+
+    // --- TRAFFIC SIMULATION LOGIC ---
+    const lanes = ["A", "B", "C", "D"];
+    let currentLaneIndex = 0;
+    let timerInterval;
+    let isEmergencyMode = false;
+
+    const getEl = (id) => document.getElementById(id);
+    const qSel = (sel) => document.querySelector(sel);
+
+    function startSystem() {
+      if (isEmergencyMode) isEmergencyMode = false;
+      clearInterval(timerInterval);
+      currentLaneIndex = 0;
+      runLaneSequence();
+    }
+
+    function getLaneTime(lane) {
+      const input = getEl(`val-${lane}`);
+      const cars = input ? parseInt(input.value) || 0 : 5;
+      return Math.max(10, cars * 3);
+    }
+
+    function resetAllLights() {
+      lanes.forEach(lane => {
+        const signalBox = getEl(`signal-${lane}`);
+        if (signalBox) {
+          signalBox.classList.remove('active-lane');
+          signalBox.querySelectorAll('.light').forEach(light => light.classList.remove('active'));
+        }
+      });
+    }
+
+    function setLight(lane, color) {
+      const light = qSel(`#signal-${lane} .light.${color}`);
+      if (light) light.classList.add('active');
+    }
+
+    function runLaneSequence() {
+      resetAllLights();
+      const lane = lanes[currentLaneIndex];
+      const signalBox = getEl(`signal-${lane}`);
+      if (signalBox) signalBox.classList.add('active-lane');
+
+      setLight(lane, 'green'); // Green
+      lanes.forEach(l => { if (l !== lane) setLight(l, 'red'); });
+
+      let timeRemaining = getLaneTime(lane);
+      updateTimer(lane, timeRemaining);
+
+      timerInterval = setInterval(() => {
+        timeRemaining--;
+        updateTimer(lane, timeRemaining);
+        if (timeRemaining <= 0) {
+          clearInterval(timerInterval);
+          switchToYellow(lane);
+        }
+      }, 1000);
+    }
+
+    function updateTimer(lane, time) {
+      const timerDisplay = qSel(`#signal-${lane} .timer-display`);
+      if (timerDisplay) timerDisplay.innerText = time > 0 ? time : 0;
+    }
+
+    function switchToYellow(lane) {
+      resetAllLights();
+      lanes.forEach(l => { if (l !== lane) setLight(l, 'red'); });
+      setLight(lane, 'yellow');
+
+      setTimeout(() => {
+        currentLaneIndex = (currentLaneIndex + 1) % lanes.length;
+        runLaneSequence();
+      }, 2000);
+    }
+
+    function activateEmergency() {
+      isEmergencyMode = true;
+      clearInterval(timerInterval);
+      resetAllLights();
+
+      const lane = "A"; // Priority Alert
+      const signalBox = getEl(`signal-${lane}`);
+      if (signalBox) signalBox.classList.add('active-lane');
+
+      setLight(lane, 'green');
+      qSel(`#signal-${lane} .timer-display`).innerText = "PRIORITY";
+
+      ["B", "C", "D"].forEach(l => {
+        setLight(l, 'red');
+        qSel(`#signal-${l} .timer-display`).innerText = "--";
+      });
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      // Defaults to home
+    });
+  </script>
+</body>
+
+</html>
